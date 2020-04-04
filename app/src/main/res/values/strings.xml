@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">PlatformsFinder</string>
+
+    //MAIN ACTIVITY STRINGS
+    <string name="goButton_string">Cerca Piattaforme</string>
+    <string name="distance_string">Distanza: </string>
+    <string name="selPosEditText_string">Inserisci località</string>
+    <string name="selPosButton_string">Cerca a partire da questa località</string>
+    <string name="selPos_connectionFailed_string">Connessione non riuscita. Riprova</string>
+
+    //GOOGLE MAPS STRINGS
+    <string name="googleMapsBasicURL" translatable="false">https://www.google.com/maps/dir/?api=1</string>
+    <string name="google_maps_api_key" translatable="false">AIzaSyBsKBFy70Mv9pah4QrR39P8xzBbWQThDIU</string>
+    <string name="geocodingBasicURL_string" translatable="false">https://maps.googleapis.com/maps/api/geocode/json?address=</string>
+
+    //MAPS ACTIVITY STRINGS
+    <string name="listViewButton_string">Visualizza come lista</string>
+    <string name="db_url">http://www.bitesrl.it/clienti/univaq/corso/piattaforme.json</string>
+    <string name="myPosition_marker">TU SEI QUI</string>
+
+    //DETAILS ACTIVITY STRINGS
+    <string name="mapsButton_string">APRI NELLE MAPPE</string>
+
+    <string name="state_string">STATO</string>
+    <string name="year_string">ANNO DI COSTRUZIONE</string>
+    <string name="type_string">TIPO</string>
+    <string name="mineral_string">MINERALE</string>
+    <string name="operator_string">OPERATORE</string>
+    <string name="connectedWells_string">NUMERO POZZI ALLACCIATI</string>
+    <string name="nonSupplyingWells_string">POZZI PRODUTTIVI NON EROGANTI</string>
+    <string name="productionWells_string">POZZI IN PRODUZIONE</string>
+    <string name="inMonitoringWells_string">POZZI IN MONITORAGGIO</string>
+    <string name="mineraryTitle_string">TITOLO MINERARIO</string>
+    <string name="mainCentral_string">COLLEGATA ALLA CENTRALE</string>
+    <string name="zone_string">ZONA</string>
+    <string name="paper_string">FOGLIO</string>
+    <string name="unmigSection_string">SEZIONE UNMIG</string>
+    <string name="portAuthorities_string">CAPITANERIA DI PORTO</string>
+    <string name="coastDistance_string">DISTANZA DALLA COSTA(KM)</string>
+    <string name="height_string">ALTEZZA SLM</string>
+    <string name="bottomdepth_string">PROFONDITA FONDALE</string>
+    <string name="dimensions_string">DIMENSIONI</string>
+    <string name="longitude_string">LONGITUDINE</string>
+    <string name="latitude_string">LATITUDINE</string>
+
+    //ITEM STRINGS
+    <string name="name_string">NOME</string>
+    <string name="detailsButton_string">DETTAGLI</string>
+
+</resources>
