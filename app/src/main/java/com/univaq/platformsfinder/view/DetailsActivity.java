@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.univaq.platformsfinder.R;
 import com.univaq.platformsfinder.model.PlatformTable;
 import com.univaq.platformsfinder.model.PlatformsDB;
+import com.univaq.platformsfinder.tools.DBHandler;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -20,13 +21,8 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         id = Integer.parseInt(getIntent().getExtras().getString("ID"));
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                table = PlatformsDB.getInstance(getApplicationContext()).platformsDao().getPlatformByID(id);
-            }
-        });
-        t.run();
+        DBHandler handler = new DBHandler();
+        table = handler.getPlatformByID(id, this);
 
         //Title TextView
         TextView titleTextView = findViewById(R.id.detailsTitleTextView);
@@ -58,7 +54,7 @@ public class DetailsActivity extends AppCompatActivity {
         detailsTextView.append(currentLine);
         currentLine = getLine(getString(R.string.zone_string), table.zona);
         detailsTextView.append(currentLine);
-        currentLine = getLine(getString(R.string.paper_string), Integer.toString(table.foglio));
+        currentLine = getLine(getString(R.string.paper_string), table.foglio);
         detailsTextView.append(currentLine);
         currentLine = getLine(getString(R.string.unmigSection_string), table.sezione);
         detailsTextView.append(currentLine);
@@ -80,8 +76,8 @@ public class DetailsActivity extends AppCompatActivity {
 
     private String getLine(String type, String obj)
     {
-        String first = "<font color=#d91507>" + type + ": </font>";
-        String last = "<font color=#030000>" + obj +"</font> /n";
-        return first + last;
+        String first = type;//"<font color=#d91507>" + type + ": </font>";
+        String last = obj;//"<font color=#030000>" + obj +"</font> /n";
+        return first + last + "/n";
     }
 }

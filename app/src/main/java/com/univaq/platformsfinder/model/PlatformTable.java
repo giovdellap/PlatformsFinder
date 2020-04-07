@@ -50,7 +50,7 @@ public class PlatformTable
     public String zona;
 
     @ColumnInfo (name = "foglio")
-    public int foglio;
+    public String foglio;
 
     @ColumnInfo (name = "sezione")
     public String sezione;

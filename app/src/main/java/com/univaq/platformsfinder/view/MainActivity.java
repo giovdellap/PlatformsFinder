@@ -22,7 +22,7 @@ import com.univaq.platformsfinder.tools.VolleyListenersFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static int distance = 50;
+    private static int distance = 500;
     private static final String TAG = "MAINACTIVITY";
 
     @Override
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.d(TAG, "progress = " + progress);
                 distance = progress;
                 distanceTextView.setText(distanceStringMaker(distance));
             }
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String distanceStringMaker(int distance)
     {
-        return R.string.distance_string + distance +" km";
+        Log.d(TAG, "distanceStringMaker distance = " + distance);
+        return getApplicationContext().getString(R.string.distance_string) + distance +" km";
     }
 }

@@ -8,12 +8,15 @@ import android.util.Log;
 
 import com.android.volley.Response;
 import com.google.android.gms.maps.model.LatLng;
+import com.univaq.platformsfinder.model.PlatformTable;
 import com.univaq.platformsfinder.model.PlatformsDB;
 import com.univaq.platformsfinder.view.MapActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class VolleyListenersFactory
 {
@@ -46,29 +49,28 @@ public class VolleyListenersFactory
         };
     }
 
-    public Response.Listener<String> mapListener(final Context context)
+    public Response.Listener<JSONArray> mapListener(final Context context)
     {
-        return new Response.Listener<String>() {
+        Log.d(TAG, "creating the listener");
+        return new Response.Listener<JSONArray>() {
             @Override
-            public void onResponse(String response)
+            public void onResponse(JSONArray response)
             {
-                try
+                Log.d(TAG, "INSIDE MAP LISTENER");
+                final JSONArray array = response; //new JSONArray(response);
+                final JSONDecoder decoder = new JSONDecoder();
+                ArrayList<PlatformTable> tables = new ArrayList<>();
+                try {
+                     tables = decoder.platformsJSONDecoder(array);
+                }catch (JSONException e)
                 {
-                    Log.d(TAG, "INSIDE MAP LISTENER");
-                    Log.d(TAG, "JSONResponse = " + response);
-                    final JSONArray array = new JSONArray(response);
-                    final JSONDecoder decoder = new JSONDecoder();
-                    Thread t = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                PlatformsDB.getInstance(context).platformsDao().insertPlatforms(decoder.platformsJSONDecoder(array));
-                            }catch (JSONException e) { Log.d(TAG, e.toString()); }
-                        }
-                    });
-                    t.run();
-                } catch (JSONException e) { Log.d(TAG, e.toString()); }
+                    Log.d(TAG, "JSONException Handled");
+                    Log.d(TAG, e.toString());
+                }
+                DBHandler handler = new DBHandler();
+                handler.insertTables(tables, context);
             }
+
         };
     }
 }

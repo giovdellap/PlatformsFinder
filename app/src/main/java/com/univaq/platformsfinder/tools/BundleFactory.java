@@ -38,16 +38,9 @@ public class BundleFactory
     public Bundle detailsBundle(final Marker marker, final Context context)
     {
         final Bundle bundle = new Bundle();
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                double lat = marker.getPosition().latitude;
-                double lon = marker.getPosition().longitude;
-                PlatformTable table = PlatformsDB.getInstance(context).platformsDao().getPlatform(lat, lon);
-                bundle.putString("ID", Integer.toString(table.id));
-            }
-        });
-        t.run();
+        DBHandler handler = new DBHandler();
+        PlatformTable table = handler.getPlatformByMarker(marker, context);
+        bundle.putString("ID", Integer.toString(table.id));
         return bundle;
     }
 

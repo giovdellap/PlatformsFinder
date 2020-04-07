@@ -1,18 +1,25 @@
 package com.univaq.platformsfinder.view;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -29,12 +36,15 @@ import com.univaq.platformsfinder.R;
 import com.univaq.platformsfinder.model.PlatformTable;
 import com.univaq.platformsfinder.model.PlatformsDB;
 import com.univaq.platformsfinder.tools.BundleFactory;
+import com.univaq.platformsfinder.tools.DBHandler;
 import com.univaq.platformsfinder.tools.MyVolley;
 import com.univaq.platformsfinder.tools.VolleyListenersFactory;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 {
     private static final String TAG = "MAPACTIVITY";
     private GoogleMap myMap;
@@ -64,6 +74,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             Log.d(TAG, "lon = " + longitude);
         }
         else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)!= PackageManager.PERMISSION_GRANTED)
+            {
+                String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+                ActivityCompat.requestPermissions(this, permissions, 0);
+            }
             myProvider = LocationServices.getFusedLocationProviderClient(this);
         }
 
@@ -103,7 +118,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     {
         Log.d(TAG, "POPULATING DB");
         VolleyListenersFactory factory = new VolleyListenersFactory();
-        Response.Listener<String> listener = factory.mapListener(getApplicationContext());
+        Response.Listener<JSONArray> listener = factory.mapListener(getApplicationContext());
         Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -112,7 +127,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         };
         String url = getString(R.string.db_url);
-        StringRequest request = new StringRequest(url, listener, errorListener);
+        JsonArrayRequest request = new JsonArrayRequest(url, listener, errorListener);
         Log.d(TAG, "URL = " + url);
         MyVolley.getInstance(getApplicationContext()).getQueue().add(request);
     }
@@ -150,22 +165,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         toReturn.addMarker(posMarker);
 
         //selecting valid platforms and adding markers
-        final ArrayList<PlatformTable> tables = new ArrayList<>();
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                tables.addAll(PlatformsDB.getInstance(context).platformsDao().getPLatforms());
-            }
-        });
-        t.run();
+        DBHandler handler = new DBHandler();
+        final ArrayList<PlatformTable> tables = handler.getAllPlatforms(getApplicationContext());
 
+        Log.d(TAG, "Tables size = " + tables.size());
         for (int i = 0; i < tables.size(); i++)
         {
             Location platformLocation = new Location("");
             platformLocation.setLongitude(tables.get(i).longitudine);
             platformLocation.setLatitude(tables.get(i).latitudine);
-            float currentDistance = platformLocation.distanceTo(location);
-            if ((currentDistance*1000) <= distance)
+            float currentDistance = platformLocation.distanceTo(location)/1000;
+            Log.d(TAG, "currentDistance = " + currentDistance);
+            if ((currentDistance) <= distance)
             {
                 MarkerOptions platformMarker = new MarkerOptions();
                 platformMarker.position(new LatLng(platformLocation.getLatitude(), platformLocation.getLongitude()));
@@ -174,15 +185,29 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 toReturn.addMarker(platformMarker);
             }
         }
+        toReturn.setOnMarkerClickListener(markerListener());
         return toReturn;
     }
 
+    private GoogleMap.OnMarkerClickListener markerListener() {
+        return new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Log.d(TAG, "OnMarkerClick");
+                BundleFactory factory = new BundleFactory();
+                Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
+                intent.putExtras(factory.detailsBundle(marker, getApplicationContext()));
+                startActivity(intent);
+                return true;
+            }
+        };
+    }
+
     @Override
-    public boolean onMarkerClick(Marker marker) {
-        BundleFactory factory = new BundleFactory();
-        Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
-        intent.putExtras(factory.detailsBundle(marker, getApplicationContext()));
-        startActivity(intent);
-        return true;
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0)
+            if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED))
+                finish();
+
     }
 }

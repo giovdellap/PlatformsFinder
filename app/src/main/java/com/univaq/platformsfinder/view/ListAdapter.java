@@ -2,6 +2,7 @@ package com.univaq.platformsfinder.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>
 {
     private ArrayList<PlatformTable> dataSet;
     private Context currentContext;
+    private static final String TAG = "LISTADAPTER";
 
     public ListAdapter(ArrayList<PlatformTable> tables)
     {
@@ -73,6 +75,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>
         public ViewHolder(View itemView)
         {
             super(itemView);
+            Log.d(TAG, "ViewHolder constructor");
             nameTextView = (TextView)itemView.findViewById(R.id.itemName);
             stateTextView = (TextView)itemView.findViewById(R.id.itemState);
             coastDistanceTextView = (TextView)itemView.findViewById(R.id.itemCoastDistance);
@@ -90,8 +93,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>
 
     private String itemString(String obj, String type)
     {
-        String first = "<font color=#6a02b5>" + type + ": </font>";
-        String last = "<font color=#030000>" + obj +"</font> /n";
+        String first = type;//"<font color=#6a02b5>" + type + ": </font>";
+        String last = obj;//"<font color=#030000>" + obj +"</font> /n";
         return first + last;
     }
 

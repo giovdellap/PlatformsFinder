@@ -15,7 +15,7 @@ public interface PlatformsDao
     public void insertPlatforms(List<PlatformTable> platformsList);
 
     @Query("SELECT * FROM platformtable")
-    public ArrayList<PlatformTable> getPLatforms();
+    public List<PlatformTable> getPLatforms();
 
     @Query("SELECT * FROM platformtable WHERE latitudine LIKE :mylat AND longitudine LIKE :mylon")
     public PlatformTable getPlatform(double mylat, double mylon);
