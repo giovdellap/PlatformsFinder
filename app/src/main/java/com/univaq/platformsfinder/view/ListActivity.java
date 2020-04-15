@@ -11,9 +11,13 @@ import android.util.Log;
 import com.univaq.platformsfinder.R;
 import com.univaq.platformsfinder.model.PlatformTable;
 import com.univaq.platformsfinder.model.PlatformsDB;
+import com.univaq.platformsfinder.tools.DBHandler;
 
 import java.util.ArrayList;
 
+/**
+ * List activity.
+ */
 public class ListActivity extends AppCompatActivity {
 
     private static final String TAG = "LISTACTIVITY";
@@ -35,6 +39,7 @@ public class ListActivity extends AppCompatActivity {
         Log.d(TAG, "distance = " + distance);
 
         ArrayList<PlatformTable> platformTables = getPlatforms(location, distance);
+        Log.d(TAG, "platforms number = " + platformTables.size());
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.listRecyclerView);
         recyclerView.setHasFixedSize(true);
@@ -45,25 +50,20 @@ public class ListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private ArrayList<PlatformTable> getPlatforms (final Location location, final int distance)
+    private ArrayList<PlatformTable> getPlatforms (Location location, int distance)
     {
-        final ArrayList<PlatformTable> goodTables = new ArrayList<>();
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ArrayList<PlatformTable> array =new ArrayList<PlatformTable>();
-                array.addAll(PlatformsDB.getInstance(getApplicationContext()).platformsDao().getPLatforms());
-                for (int i = 0; i < array.size(); i++)
-                {
-                    Location platformLocation = new Location("");
-                    platformLocation.setLatitude(array.get(i).latitudine);
-                    platformLocation.setLongitude(array.get(i).longitudine);
-                    if (location.distanceTo(platformLocation)*1000 < distance)
-                        goodTables.add(array.get(i));
-                }
-            }
-        });
-        t.start();
+        ArrayList<PlatformTable> goodTables = new ArrayList<>();
+        DBHandler handler = new DBHandler();
+        ArrayList<PlatformTable> allTables = handler.getAllPlatforms(getApplicationContext());
+        for (int i = 0; i < allTables.size(); i++)
+        {
+            Location tableLocation = new Location("");
+            tableLocation.setLatitude(allTables.get(i).latitudine);
+            tableLocation.setLongitude(allTables.get(i).longitudine);
+            float currentDistance = tableLocation.distanceTo(location)/1000;
+            if(currentDistance<distance)
+                goodTables.add(allTables.get(i));
+        }
         return goodTables;
     }
 }

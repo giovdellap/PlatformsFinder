@@ -16,15 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -34,16 +32,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.univaq.platformsfinder.R;
 import com.univaq.platformsfinder.model.PlatformTable;
-import com.univaq.platformsfinder.model.PlatformsDB;
 import com.univaq.platformsfinder.tools.BundleFactory;
 import com.univaq.platformsfinder.tools.DBHandler;
 import com.univaq.platformsfinder.tools.MyVolley;
+import com.univaq.platformsfinder.tools.StringMaker;
 import com.univaq.platformsfinder.tools.VolleyListenersFactory;
 
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 
+/**
+ * Map activity.
+ */
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 {
     private static final String TAG = "MAPACTIVITY";
@@ -52,6 +53,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location myLocation;
     private int distance;
     private String mode;
+    private boolean isEmpty = false;
 
 
     @Override
@@ -82,22 +84,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             myProvider = LocationServices.getFusedLocationProviderClient(this);
         }
 
+
         SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //Populates DB if first time
-        SharedPreferences pref = getSharedPreferences("pref", Context.MODE_PRIVATE);
-        //if(pref.getBoolean("first_time", true))
-        if(true)
-        {
-            Log.d(TAG, "IS FIRST TIME");
-            populateDB();
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean("first_time", false);
-            editor.apply();
-        }
-
         Button listViewButton = findViewById(R.id.listViewButton);
+        StringMaker maker = new StringMaker();
+        listViewButton.setText(maker.listButtonString(this));
         listViewButton.setOnClickListener(listButtonListener());
     }
 
@@ -106,10 +99,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BundleFactory factory = new BundleFactory();
-                Intent intent = new Intent(getApplicationContext(), ListActivity.class);
-                intent.putExtras(factory.listBundle(myLocation, distance));
-                startActivity(intent);
+                if(!isEmpty) {
+                    BundleFactory factory = new BundleFactory();
+                    Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+                    intent.putExtras(factory.listBundle(myLocation, distance));
+                    startActivity(intent);
+                }
             }
         };
     }
@@ -128,31 +123,42 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         };
         String url = getString(R.string.db_url);
         JsonArrayRequest request = new JsonArrayRequest(url, listener, errorListener);
-        Log.d(TAG, "URL = " + url);
         MyVolley.getInstance(getApplicationContext()).getQueue().add(request);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         myMap = googleMap;
+
+        //Populates DB if first time
+        SharedPreferences pref = getSharedPreferences("pref", Context.MODE_PRIVATE);
+        if(pref.getBoolean("first_time", true))
+        {
+            Log.d(TAG, "IS FIRST TIME");
+            populateDB();
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("first_time", false);
+            editor.apply();
+        }
+
         if(mode.equals("LOCATION"))
         {
             myProvider.getLastLocation().addOnSuccessListener(MapActivity.this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     Log.d(TAG, "location = " + location.toString());
-                    myMap = myMapMarkerCreator(myMap, location, getApplicationContext());
+                    myMap = myMapMarkerCreator(myMap, location);
                     myLocation = location;
                 }
             });
         }
         else
         {
-            myMap = myMapMarkerCreator(myMap, this.myLocation, getApplicationContext());
+            myMap = myMapMarkerCreator(myMap, this.myLocation);
         }
     }
 
-    private GoogleMap myMapMarkerCreator(GoogleMap map, Location location, final Context context)
+    private GoogleMap myMapMarkerCreator(GoogleMap map, Location location)
     {
         GoogleMap toReturn = map;
 
@@ -175,7 +181,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             platformLocation.setLongitude(tables.get(i).longitudine);
             platformLocation.setLatitude(tables.get(i).latitudine);
             float currentDistance = platformLocation.distanceTo(location)/1000;
-            Log.d(TAG, "currentDistance = " + currentDistance);
             if ((currentDistance) <= distance)
             {
                 MarkerOptions platformMarker = new MarkerOptions();
@@ -183,9 +188,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 platformMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 platformMarker.title(tables.get(i).denominazione);
                 toReturn.addMarker(platformMarker);
+                isEmpty = true;
             }
         }
         toReturn.setOnMarkerClickListener(markerListener());
+
+        //adjusting zoom
+        LatLng camera = new LatLng(location.getLatitude(), location.getLongitude());
+        toReturn.moveCamera(CameraUpdateFactory.newLatLngZoom(camera, 7));
         return toReturn;
     }
 
@@ -193,7 +203,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Log.d(TAG, "OnMarkerClick");
                 BundleFactory factory = new BundleFactory();
                 Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
                 intent.putExtras(factory.detailsBundle(marker, getApplicationContext()));

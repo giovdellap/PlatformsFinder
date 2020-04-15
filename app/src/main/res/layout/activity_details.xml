@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/backGroundColor">
 
     <TextView
         android:id="@+id/detailsTitleTextView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.2" />
+        android:layout_weight="0.1"
+        android:gravity="center_horizontal"/>
 
     <TextView
         android:id="@+id/detailsTextView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.8" />
+        android:layout_weight="0.9"
+        android:maxLines="40"
+        android:layout_marginHorizontal="3dp"
+        android:lineSpacingMultiplier="1.6"
+        android:scrollbars="vertical"/>
 
 </LinearLayout>

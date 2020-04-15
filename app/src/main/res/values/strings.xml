@@ -5,7 +5,7 @@
     <string name="goButton_string">Cerca Piattaforme</string>
     <string name="distance_string">Distanza: </string>
     <string name="selPosEditText_string">Inserisci località</string>
-    <string name="selPosButton_string">Cerca a partire da questa località</string>
+    <string name="selPosButton_string">Cerca da questa località</string>
     <string name="selPos_connectionFailed_string">Connessione non riuscita. Riprova</string>
 
     //GOOGLE MAPS STRINGS

@@ -17,12 +17,16 @@ import com.android.volley.toolbox.StringRequest;
 import com.univaq.platformsfinder.R;
 import com.univaq.platformsfinder.tools.BundleFactory;
 import com.univaq.platformsfinder.tools.MyVolley;
+import com.univaq.platformsfinder.tools.StringMaker;
 import com.univaq.platformsfinder.tools.URLManager;
 import com.univaq.platformsfinder.tools.VolleyListenersFactory;
 
+/**
+ * Main activity.
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private static int distance = 500;
+    private static int distance = 300;
     private static final String TAG = "MAINACTIVITY";
 
     @Override
@@ -32,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
         //GoButton Creation
         Button goButton = findViewById(R.id.goButton);
+        StringMaker maker = new StringMaker();
+        goButton.setText(maker.mainButtonString(this));
+        goButton.setTextSize(18);
         View.OnClickListener goButtonListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         //SelPos EditText and Button Creation
         final EditText selPosEditText = findViewById(R.id.addressTextView);
         Button selPosButton = findViewById(R.id.selPosButton);
+        selPosButton.setText(maker.selPosButtonString(this));
 
         //SelPos Volley Listeners
         VolleyListenersFactory factory = new VolleyListenersFactory();
@@ -86,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                     String address = selPosEditText.getText().toString();
                     String url = urlManager.getGeocodingURL(address, getApplicationContext());
                     StringRequest request = new StringRequest(url, listener, errorListener);
-                    Log.d(TAG, "URL = " + url);
                     MyVolley.getInstance(getApplicationContext()).getQueue().add(request);
                 }
             }

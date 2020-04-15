@@ -8,29 +8,31 @@
 
     <Button
         android:id="@+id/goButton"
-        android:layout_width="134dp"
-        android:layout_height="83dp"
-        android:text="@string/goButton_string"
+        android:layout_width="184dp"
+        android:layout_height="169dp"
+        android:background="@drawable/round_button"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.14" />
+        app:layout_constraintVertical_bias="0.135"
+        android:textFontWeight="700"/>
 
     <SeekBar
         android:id="@+id/seekBar"
-        android:layout_width="188dp"
-        android:layout_height="33dp"
+        android:layout_width="261dp"
+        android:layout_height="44dp"
+        android:max="1000"
         android:min="20"
-        android:max="5000"
-        android:progress="500"
+        android:progress="300"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.296" />
+        app:layout_constraintVertical_bias="0.724" />
 
     <TextView
         android:id="@+id/distanceTextView"
@@ -41,28 +43,32 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.396" />
+        app:layout_constraintVertical_bias="0.822" />
 
     <EditText
         android:id="@+id/addressTextView"
         android:layout_width="236dp"
         android:layout_height="55dp"
         android:hint="@string/selPosEditText_string"
+        android:textSize="16sp"
         android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.43" />
 
     <Button
         android:id="@+id/selPosButton"
-        android:layout_width="168dp"
-        android:layout_height="64dp"
-        android:text="@string/selPosButton_string"
+        android:layout_width="240dp"
+        android:layout_height="67dp"
+        android:background="@drawable/rounded_shape"
+        android:elevation="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.631" />
+        app:layout_constraintVertical_bias="0.561" />
 </androidx.constraintlayout.widget.ConstraintLayout>

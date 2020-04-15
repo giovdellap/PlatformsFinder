@@ -10,10 +10,19 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Decodes JSON files into objects
+ */
 public class JSONDecoder
 {
     private static final String TAG = "DECODER";
 
+    /**
+     * Gets geocoding JSON file from maps and returns coordinates in LatLng format
+     *
+     * @param obj the JSONobject
+     * @return the coordinates
+     */
     public LatLng addressJSONDecoder(JSONObject obj) throws org.json.JSONException
     {
         JSONArray array = obj.getJSONArray("results");
@@ -25,9 +34,14 @@ public class JSONDecoder
         return new LatLng(lat, lng);
     }
 
+    /**
+     * Gets a JSON array of platforms and returns platformtables arraylist
+     *
+     * @param array JSON array
+     * @return the arraylist
+     */
     public ArrayList<PlatformTable> platformsJSONDecoder(JSONArray array) throws org.json.JSONException
     {
-        Log.d(TAG, "inside decoder");
         ArrayList<PlatformTable> toReturn = new ArrayList<>();
         for (int i = 0; i < array.length(); i++)
         {
@@ -58,7 +72,7 @@ public class JSONDecoder
             table.latitudine = Double.parseDouble(obj.getString("clatitudine__wgs84__"));
             toReturn.add(table);
         }
-        Log.d(TAG, "number = " + toReturn.size());
+        Log.d(TAG, "platforms number = " + toReturn.size());
         return toReturn;
     }
 
@@ -75,6 +89,6 @@ public class JSONDecoder
         if(toConvert.equals(""))
             return "";
         else
-            return toConvert.split("|")[0];
+            return toConvert.split("\\|")[0];
     }
 }

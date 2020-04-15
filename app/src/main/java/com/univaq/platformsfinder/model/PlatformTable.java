@@ -4,9 +4,13 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+/**
+ * The Platform table.
+ */
 @Entity
 public class PlatformTable
 {
+
     @PrimaryKey
     public int id;
 
