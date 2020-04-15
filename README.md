@@ -2,7 +2,7 @@
 
 An app that shows offshore platforms near you  
 Works only in Italy because APIs are Italy-based  
-A demo video is avalaible in media folder
+A demo video is avalaible in media folder  
 JavaDoc is available in app/documentation folder 
 
 
